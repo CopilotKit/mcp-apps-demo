@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Investment Simulator</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green-50: #f0fdf4; --green-100: #dcfce7; --green-500: #22c55e; --green-600: #16a34a;
+      --red-50: #fef2f2; --red-500: #ef4444; --red-600: #dc2626;
+      --blue-50: #eff6ff; --blue-100: #dbeafe; --blue-500: #3b82f6; --blue-600: #2563eb; --blue-700: #1d4ed8;
+      --gray-50: #f9fafb; --gray-100: #f3f4f6; --gray-200: #e5e7eb; --gray-300: #d1d5db;
+      --gray-400: #9ca3af; --gray-500: #6b7280; --gray-600: #4b5563; --gray-700: #374151; --gray-800: #1f2937;
+    }
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--gray-50); color: var(--gray-800); line-height: 1.5; }
+    .hidden { display: none !important; }
+    .flex { display: flex; } .flex-1 { flex: 1; } .items-center { align-items: center; } .justify-between { justify-content: space-between; }
+    .gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; }
+    .grid { display: grid; } .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .p-3 { padding: 0.75rem; } .p-4 { padding: 1rem; }
+    .mb-2 { margin-bottom: 0.5rem; } .mb-3 { margin-bottom: 0.75rem; } .mt-2 { margin-top: 0.5rem; } .mt-3 { margin-top: 0.75rem; } .ml-2 { margin-left: 0.5rem; } .mr-2 { margin-right: 0.5rem; }
+    .text-xs { font-size: 0.75rem; } .text-sm { font-size: 0.875rem; } .text-lg { font-size: 1.125rem; } .text-xl { font-size: 1.25rem; } .text-2xl { font-size: 1.5rem; }
+    .font-medium { font-weight: 500; } .font-semibold { font-weight: 600; } .font-bold { font-weight: 700; }
+    .text-center { text-align: center; } .text-right { text-align: right; }
+    .text-gray-400 { color: var(--gray-400); } .text-gray-500 { color: var(--gray-500); } .text-gray-600 { color: var(--gray-600); } .text-gray-800 { color: var(--gray-800); }
+    .text-green-600 { color: var(--green-600); } .text-red-600 { color: var(--red-600); }
+    .bg-white { background: white; } .bg-gray-50 { background: var(--gray-50); } .bg-gray-100 { background: var(--gray-100); }
+    .bg-blue-50 { background: var(--blue-50); } .bg-blue-100 { background: var(--blue-100); }
+    .border { border: 1px solid var(--gray-200); } .rounded-lg { border-radius: 0.5rem; } .rounded-xl { border-radius: 0.75rem; }
+    .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+    button { cursor: pointer; border: none; font: inherit; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn { padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 500; transition: all 0.2s; }
+    .btn-sm { padding: 0.25rem 0.75rem; font-size: 0.875rem; }
+    .btn-primary { background: var(--blue-600); color: white; }
+    .btn-primary:hover:not(:disabled) { background: var(--blue-700); }
+    .btn-success { background: var(--green-500); color: white; }
+    .btn-success:hover:not(:disabled) { background: var(--green-600); }
+    .btn-danger { background: var(--red-500); color: white; }
+    .btn-danger:hover:not(:disabled) { background: var(--red-600); }
+    .btn-outline { background: white; border: 1px solid var(--gray-300); color: var(--gray-700); }
+    .btn-outline:hover:not(:disabled) { background: var(--gray-50); }
+    button:focus-visible { outline: 2px solid var(--blue-500); outline-offset: 2px; }
+    .btn:focus-visible { box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
+    .btn:active:not(:disabled) { transform: scale(0.98); }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes slide-up { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .animate-spin { animation: spin 1s linear infinite; }
+    .card { background: white; border-radius: 0.75rem; padding: 1rem; border: 1px solid var(--gray-200); margin-bottom: 0.75rem; }
+    .portfolio-header { background: linear-gradient(135deg, var(--blue-50), var(--blue-100)); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1rem; }
+    .total-value { font-size: 1.75rem; font-weight: 700; color: var(--gray-800); }
+    .profit-loss.positive { color: var(--green-600); } .profit-loss.negative { color: var(--red-600); }
+    .section-header { font-size: 0.875rem; font-weight: 600; color: var(--gray-700); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+    .holding-row { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--gray-100); }
+    .holding-row:last-child { border-bottom: none; }
+    .bar-chart { display: flex; align-items: flex-end; height: 80px; gap: 4px; padding: 0 4px; }
+    .bar { flex: 1; background: linear-gradient(to top, var(--blue-600), var(--blue-400)); border-radius: 2px 2px 0 0; transition: height 0.3s; min-width: 8px; }
+    .pie-chart-container { display: flex; align-items: center; gap: 1rem; }
+    .pie-chart { width: 80px; height: 80px; border-radius: 50%; }
+    .legend-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .stock-card { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; background: var(--gray-50); border-radius: 0.5rem; margin-bottom: 0.5rem; transition: all 0.2s; }
+    .stock-card:hover { background: var(--gray-100); }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 100; }
+    .modal-content { background: white; border-radius: 0.75rem; padding: 1.5rem; width: 90%; max-width: 320px; animation: slide-up 0.3s ease; }
+    .modal-input { width: 100%; padding: 0.75rem; border: 1px solid var(--gray-300); border-radius: 0.5rem; font-size: 1rem; margin-bottom: 0.75rem; }
+    .modal-input:focus { outline: none; border-color: var(--blue-500); }
+  </style>
+</head>
+<body>
+  <div id="app" style="padding: 0.75rem; width: 100%;">
+    <div id="loading" class="text-center" style="padding: 2rem 0;">
+      <div style="font-size: 2rem; margin-bottom: 1rem;">📈</div>
+      <div class="animate-spin" style="width: 2rem; height: 2rem; border: 3px solid var(--gray-200); border-top-color: var(--blue-600); border-radius: 50%; margin: 0 auto 1rem;"></div>
+      <p class="text-gray-600 font-medium">Building your portfolio...</p>
+    </div>
+    <div id="content" class="hidden">
+      <div class="portfolio-header">
+        <div class="text-xs text-gray-500 mb-1">Total Portfolio Value</div>
+        <div id="total-value" class="total-value">$0.00</div>
+        <div class="flex items-center gap-2 mt-2">
+          <span id="total-pl" class="font-semibold profit-loss positive">+$0.00</span>
+          <span id="total-pl-percent" class="text-sm text-gray-500">(+0.00%)</span>
+        </div>
+        <div class="flex items-center gap-3 mt-3 text-xs text-gray-600">
+          <span>💵 Cash: <span id="cash-amount" class="font-medium">$0.00</span></span>
+          <button id="refresh-btn" class="btn btn-outline btn-sm">🔄 Refresh</button>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3 mb-3">
+        <div class="card">
+          <div class="section-header"><span>📊</span><span>7-Day</span></div>
+          <div id="performance-chart" class="bar-chart"></div>
+        </div>
+        <div class="card">
+          <div class="section-header"><span>🥧</span><span>Allocation</span></div>
+          <div class="pie-chart-container">
+            <div id="pie-chart" class="pie-chart"></div>
+            <div>
+              <div class="legend-item"><div class="legend-dot" style="background: var(--blue-500);"></div><span>Stocks <span id="stocks-percent">0%</span></span></div>
+              <div class="legend-item mt-2"><div class="legend-dot" style="background: var(--gray-300);"></div><span>Cash <span id="cash-percent">0%</span></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-header"><span>💼</span><span>Holdings</span><span id="holdings-count" class="text-xs text-gray-400 font-normal" style="margin-left: auto;">0 stocks</span></div>
+        <div id="holdings-list"></div>
+      </div>
+      <div class="card">
+        <div class="section-header"><span>🛒</span><span>Buy Stocks</span></div>
+        <div id="available-stocks" style="max-height: 200px; overflow-y: auto;"></div>
+      </div>
+    </div>
+    <div id="trade-modal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <div class="text-lg font-semibold mb-3"><span id="modal-action">Buy</span> <span id="modal-symbol">AAPL</span></div>
+        <div class="text-sm text-gray-600 mb-2">Price: <span id="modal-price" class="font-medium">$0.00</span></div>
+        <input type="number" id="quantity-input" class="modal-input" placeholder="Quantity" min="1" value="1">
+        <div class="text-sm text-gray-600 mb-3">Total: <span id="modal-total" class="font-semibold">$0.00</span></div>
+        <div class="flex gap-2">
+          <button id="cancel-trade-btn" class="btn btn-outline flex-1">Cancel</button>
+          <button id="confirm-trade-btn" class="btn btn-primary flex-1">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="module">
+    const mcpApp = (() => {
+      let requestId = 1;
+      const pendingRequests = new Map();
+      function sendRequest(method, params) {
+        const id = requestId++;
+        return new Promise((resolve, reject) => {
+          pendingRequests.set(id, { resolve, reject });
+          window.parent.postMessage({ jsonrpc: "2.0", id, method, params }, "*");
+        });
+      }
+      function sendNotification(method, params) {
+        window.parent.postMessage({ jsonrpc: "2.0", method, params }, "*");
+      }
+      window.addEventListener("message", (event) => {
+        const data = event.data;
+        if (!data || typeof data !== "object") return;
+        if (data.id && pendingRequests.has(data.id)) {
+          const { resolve, reject } = pendingRequests.get(data.id);
+          pendingRequests.delete(data.id);
+          data.error ? reject(data.error) : resolve(data.result);
+          return;
+        }
+        if (data.method && notificationHandlers[data.method]) notificationHandlers[data.method](data.params);
+      });
+      const notificationHandlers = {};
+      function onNotification(method, handler) { notificationHandlers[method] = handler; }
+      function reportSize() {
+        const app = document.getElementById("app");
+        sendNotification("ui/notifications/size-change", { width: Math.ceil(app.scrollWidth), height: Math.ceil(app.scrollHeight) });
+      }
+      return { sendRequest, sendNotification, onNotification, reportSize };
+    })();
+
+    let portfolio = null, availableStocks = [], currentTrade = null;
+    const el = {
+      loading: document.getElementById("loading"), content: document.getElementById("content"),
+      totalValue: document.getElementById("total-value"), totalPl: document.getElementById("total-pl"),
+      totalPlPercent: document.getElementById("total-pl-percent"), cashAmount: document.getElementById("cash-amount"),
+      refreshBtn: document.getElementById("refresh-btn"), performanceChart: document.getElementById("performance-chart"),
+      pieChart: document.getElementById("pie-chart"), stocksPercent: document.getElementById("stocks-percent"),
+      cashPercent: document.getElementById("cash-percent"), holdingsList: document.getElementById("holdings-list"),
+      holdingsCount: document.getElementById("holdings-count"), availableStocks: document.getElementById("available-stocks"),
+      tradeModal: document.getElementById("trade-modal"), modalAction: document.getElementById("modal-action"),
+      modalSymbol: document.getElementById("modal-symbol"), modalPrice: document.getElementById("modal-price"),
+      quantityInput: document.getElementById("quantity-input"), modalTotal: document.getElementById("modal-total"),
+      cancelTradeBtn: document.getElementById("cancel-trade-btn"), confirmTradeBtn: document.getElementById("confirm-trade-btn"),
+    };
+
+    async function initialize() {
+      try {
+        await mcpApp.sendRequest("ui/initialize", { protocolVersion: "2025-06-18", appInfo: { name: "Investment Simulator", version: "1.0.0" }, appCapabilities: {} });
+        mcpApp.sendNotification("ui/notifications/initialized", {});
+        new ResizeObserver(() => mcpApp.reportSize()).observe(document.getElementById("app"));
+      } catch (e) { console.error("Init failed:", e); }
+    }
+
+    mcpApp.onNotification("ui/notifications/tool-result", (params) => {
+      const result = params?.structuredContent;
+      if (result?.portfolio) { portfolio = result.portfolio; availableStocks = result.availableStocks || []; render(); }
+    });
+
+    const fmt = (v) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(v);
+    const fmtPct = (v, sign = true) => `${sign && v > 0 ? "+" : ""}${v.toFixed(2)}%`;
+
+    function render() {
+      if (!portfolio) return;
+      el.loading.classList.add("hidden"); el.content.classList.remove("hidden");
+      el.totalValue.textContent = fmt(portfolio.totalValue);
+      el.cashAmount.textContent = fmt(portfolio.cash);
+      const plClass = portfolio.totalProfitLoss >= 0 ? "positive" : "negative";
+      el.totalPl.textContent = `${portfolio.totalProfitLoss >= 0 ? "+" : ""}${fmt(portfolio.totalProfitLoss)}`;
+      el.totalPl.className = `font-semibold profit-loss ${plClass}`;
+      const initVal = portfolio.totalValue - portfolio.totalProfitLoss;
+      el.totalPlPercent.textContent = `(${fmtPct(initVal > 0 ? (portfolio.totalProfitLoss / initVal) * 100 : 0)})`;
+      renderChart(); renderPie(); renderHoldings(); renderStocks(); mcpApp.reportSize();
+    }
+
+    function renderChart() {
+      const perf = portfolio.performance || [];
+      if (!perf.length) return;
+      const vals = perf.map(p => p.value), min = Math.min(...vals) * 0.95, max = Math.max(...vals) * 1.05, range = max - min || 1;
+      el.performanceChart.innerHTML = perf.map((p, i) => {
+        const h = Math.max(10, ((p.value - min) / range) * 100);
+        const isLast = i === perf.length - 1;
+        return `<div class="bar" style="height:${h}%;${isLast ? 'background:linear-gradient(to top,var(--green-600),var(--green-400));' : ''}"></div>`;
+      }).join("");
+    }
+
+    function renderPie() {
+      const s = portfolio.allocation?.stocks || 0, c = portfolio.allocation?.cash || 0;
+      el.pieChart.style.background = `conic-gradient(var(--blue-500) 0% ${s}%, var(--gray-300) ${s}% 100%)`;
+      el.stocksPercent.textContent = `${s}%`; el.cashPercent.textContent = `${c}%`;
+    }
+
+    function renderHoldings() {
+      const h = portfolio.holdings || [];
+      el.holdingsCount.textContent = `${h.length} stock${h.length !== 1 ? "s" : ""}`;
+      if (!h.length) { el.holdingsList.innerHTML = '<p class="text-sm text-gray-500 text-center" style="padding:1rem;">No holdings yet</p>'; return; }
+      el.holdingsList.innerHTML = h.map(x => {
+        const cls = x.profitLoss >= 0 ? "positive" : "negative", sign = x.profitLoss >= 0 ? "+" : "";
+        return `<div class="holding-row"><div class="flex-1"><div class="font-semibold">${x.symbol}</div><div class="text-xs text-gray-500">${x.shares} @ ${fmt(x.avgCost)}</div></div><div class="text-right"><div class="font-medium">${fmt(x.value)}</div><div class="text-xs profit-loss ${cls}">${sign}${fmt(x.profitLoss)}</div></div><button class="btn btn-danger btn-sm ml-2" data-action="sell" data-symbol="${x.symbol}" data-price="${x.currentPrice}" data-max="${x.shares}">Sell</button></div>`;
+      }).join("");
+      document.querySelectorAll('[data-action="sell"]').forEach(btn => btn.addEventListener("click", () => openModal("sell", btn.dataset.symbol, +btn.dataset.price, +btn.dataset.max)));
+    }
+
+    function renderStocks() {
+      if (!availableStocks.length) { el.availableStocks.innerHTML = '<p class="text-sm text-gray-500 text-center" style="padding:1rem;">No stocks available</p>'; return; }
+      el.availableStocks.innerHTML = availableStocks.map(s => {
+        const cls = s.change >= 0 ? "text-green-600" : "text-red-600", sign = s.change >= 0 ? "+" : "";
+        return `<div class="stock-card"><div class="flex-1"><div class="font-semibold text-sm">${s.symbol}</div><div class="text-xs text-gray-500">${s.name}</div></div><div class="text-right mr-2"><div class="font-medium">${fmt(s.price)}</div><div class="text-xs ${cls}">${sign}${s.change.toFixed(2)}%</div></div><button class="btn btn-success btn-sm" data-action="buy" data-symbol="${s.symbol}" data-price="${s.price}">Buy</button></div>`;
+      }).join("");
+      document.querySelectorAll('[data-action="buy"]').forEach(btn => btn.addEventListener("click", () => openModal("buy", btn.dataset.symbol, +btn.dataset.price)));
+    }
+
+    function openModal(action, symbol, price, maxShares = null) {
+      currentTrade = { action, symbol, price, maxShares };
+      el.modalAction.textContent = action === "buy" ? "Buy" : "Sell";
+      el.modalSymbol.textContent = symbol; el.modalPrice.textContent = fmt(price);
+      el.quantityInput.value = 1; el.quantityInput.max = maxShares || 9999;
+      updateTotal(); el.tradeModal.classList.remove("hidden"); el.quantityInput.focus();
+    }
+
+    function updateTotal() {
+      if (!currentTrade) return;
+      const qty = parseInt(el.quantityInput.value, 10) || 0;
+      el.modalTotal.textContent = fmt(qty * currentTrade.price);
+      el.confirmTradeBtn.className = currentTrade.action === "buy" ? "btn btn-success flex-1" : "btn btn-danger flex-1";
+    }
+
+    function closeModal() { el.tradeModal.classList.add("hidden"); currentTrade = null; }
+
+    async function executeTrade() {
+      if (!currentTrade || !portfolio) return;
+      const qty = parseInt(el.quantityInput.value, 10);
+      if (qty <= 0) return;
+      if (currentTrade.action === "sell" && currentTrade.maxShares && qty > currentTrade.maxShares) { alert(`Max ${currentTrade.maxShares} shares`); return; }
+      const total = qty * currentTrade.price;
+      if (currentTrade.action === "buy" && total > portfolio.cash) { alert(`Insufficient funds: ${fmt(portfolio.cash)}`); return; }
+      // Store trade details before closing modal (closeModal sets currentTrade = null)
+      const tradeDetails = { symbol: currentTrade.symbol, action: currentTrade.action, quantity: qty };
+      closeModal();
+      try {
+        const res = await mcpApp.sendRequest("tools/call", { name: "execute-trade", arguments: { portfolioId: portfolio.id, symbol: tradeDetails.symbol, action: tradeDetails.action, quantity: tradeDetails.quantity } });
+        if (res?.structuredContent?.portfolio) { portfolio = res.structuredContent.portfolio; render(); }
+      } catch (e) { console.error("Trade failed:", e); alert("Trade failed"); }
+    }
+
+    async function refreshPrices() {
+      if (!portfolio) return;
+      el.refreshBtn.disabled = true; el.refreshBtn.textContent = "🔄 ...";
+      try {
+        const res = await mcpApp.sendRequest("tools/call", { name: "refresh-prices", arguments: { portfolioId: portfolio.id } });
+        if (res?.structuredContent?.portfolio) { portfolio = res.structuredContent.portfolio; availableStocks = res.structuredContent.availableStocks || availableStocks; render(); }
+      } catch (e) { console.error("Refresh failed:", e); }
+      finally { el.refreshBtn.disabled = false; el.refreshBtn.textContent = "🔄 Refresh"; }
+    }
+
+    el.quantityInput.addEventListener("input", updateTotal);
+    el.cancelTradeBtn.addEventListener("click", closeModal);
+    el.confirmTradeBtn.addEventListener("click", executeTrade);
+    el.refreshBtn.addEventListener("click", refreshPrices);
+    el.tradeModal.addEventListener("click", (e) => { if (e.target === el.tradeModal) closeModal(); });
+    window.addEventListener("load", initialize);
+  </script>
+</body>
+</html>

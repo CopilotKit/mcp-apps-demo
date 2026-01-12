@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recipe Chef</title>
+  <style>
+    /* Base reset */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* Colors */
+    :root {
+      --orange-50: #fff7ed; --orange-100: #ffedd5; --orange-500: #f97316; --orange-600: #ea580c; --orange-700: #c2410c;
+      --green-50: #f0fdf4; --green-100: #dcfce7; --green-500: #22c55e; --green-600: #16a34a;
+      --gray-50: #f9fafb; --gray-100: #f3f4f6; --gray-200: #e5e7eb; --gray-300: #d1d5db;
+      --gray-400: #9ca3af; --gray-500: #6b7280; --gray-600: #4b5563; --gray-700: #374151; --gray-800: #1f2937;
+      --blue-50: #eff6ff; --blue-500: #3b82f6; --blue-600: #2563eb;
+      --red-50: #fef2f2; --red-500: #ef4444;
+      --yellow-500: #eab308;
+    }
+
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--gray-50); color: var(--gray-800); line-height: 1.5; }
+
+    /* Layout utilities */
+    .hidden { display: none !important; }
+    .flex { display: flex; }
+    .flex-wrap { flex-wrap: wrap; }
+    .flex-1 { flex: 1 1 0%; }
+    .items-center { align-items: center; }
+    .items-start { align-items: flex-start; }
+    .justify-between { justify-content: space-between; }
+    .justify-center { justify-content: center; }
+    .gap-1 { gap: 0.25rem; }
+    .gap-2 { gap: 0.5rem; }
+    .gap-3 { gap: 0.75rem; }
+    .gap-4 { gap: 1rem; }
+    .grid { display: grid; }
+    .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+
+    /* Spacing */
+    .p-2 { padding: 0.5rem; } .p-3 { padding: 0.75rem; } .p-4 { padding: 1rem; }
+    .px-2 { padding-left: 0.5rem; padding-right: 0.5rem; }
+    .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+    .py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
+    .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+    .py-8 { padding-top: 2rem; padding-bottom: 2rem; }
+    .mb-1 { margin-bottom: 0.25rem; } .mb-2 { margin-bottom: 0.5rem; } .mb-3 { margin-bottom: 0.75rem; } .mb-4 { margin-bottom: 1rem; }
+    .mr-1 { margin-right: 0.25rem; } .mr-2 { margin-right: 0.5rem; }
+    .mt-1 { margin-top: 0.25rem; } .mt-2 { margin-top: 0.5rem; } .mt-3 { margin-top: 0.75rem; } .mt-4 { margin-top: 1rem; }
+    .mx-auto { margin-left: auto; margin-right: auto; }
+
+    /* Sizing */
+    .w-full { width: 100%; }
+    .min-w-0 { min-width: 0; }
+
+    /* Typography */
+    .text-xs { font-size: 0.75rem; } .text-sm { font-size: 0.875rem; } .text-base { font-size: 1rem; }
+    .text-lg { font-size: 1.125rem; } .text-xl { font-size: 1.25rem; } .text-2xl { font-size: 1.5rem; }
+    .text-3xl { font-size: 1.875rem; } .text-4xl { font-size: 2.25rem; }
+    .font-medium { font-weight: 500; } .font-semibold { font-weight: 600; } .font-bold { font-weight: 700; }
+    .text-center { text-align: center; }
+    .text-gray-400 { color: var(--gray-400); } .text-gray-500 { color: var(--gray-500); }
+    .text-gray-600 { color: var(--gray-600); } .text-gray-700 { color: var(--gray-700); } .text-gray-800 { color: var(--gray-800); }
+    .text-orange-600 { color: var(--orange-600); } .text-orange-700 { color: var(--orange-700); }
+    .text-green-600 { color: var(--green-600); }
+    .line-through { text-decoration: line-through; }
+
+    /* Backgrounds */
+    .bg-white { background: white; }
+    .bg-gray-50 { background: var(--gray-50); } .bg-gray-100 { background: var(--gray-100); }
+    .bg-orange-50 { background: var(--orange-50); } .bg-orange-100 { background: var(--orange-100); }
+    .bg-orange-500 { background: var(--orange-500); } .bg-orange-600 { background: var(--orange-600); }
+    .bg-green-50 { background: var(--green-50); } .bg-green-100 { background: var(--green-100); }
+    .bg-green-500 { background: var(--green-500); }
+    .bg-blue-50 { background: var(--blue-50); }
+
+    /* Borders & Radius */
+    .border { border: 1px solid var(--gray-200); }
+    .border-b { border-bottom: 1px solid var(--gray-200); }
+    .border-orange-200 { border-color: #fed7aa; }
+    .border-green-200 { border-color: #bbf7d0; }
+    .rounded { border-radius: 0.25rem; } .rounded-lg { border-radius: 0.5rem; } .rounded-xl { border-radius: 0.75rem; }
+    .rounded-full { border-radius: 9999px; }
+    .overflow-hidden { overflow: hidden; }
+
+    /* Shadows */
+    .shadow-sm { box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+
+    /* Buttons */
+    button { cursor: pointer; border: none; font: inherit; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn { padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 500; transition: all 0.2s; }
+    .btn-primary { background: var(--orange-600); color: white; }
+    .btn-primary:hover:not(:disabled) { background: var(--orange-700); }
+    .btn-outline { background: white; border: 1px solid var(--gray-300); color: var(--gray-700); }
+    .btn-outline:hover:not(:disabled) { background: var(--gray-50); }
+    .btn-sm { padding: 0.25rem 0.5rem; font-size: 0.875rem; }
+    .btn-icon { width: 2rem; height: 2rem; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 0.5rem; }
+
+    /* Animations */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes pop-in { 0% { transform: scale(0); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+    @keyframes check-bounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+    .animate-spin { animation: spin 1s linear infinite; }
+    .check-animate { animation: pop-in 0.3s ease; }
+
+    /* Recipe header */
+    .recipe-header { background: linear-gradient(135deg, var(--orange-50), var(--orange-100)); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1rem; }
+    .recipe-icon { font-size: 3rem; line-height: 1; }
+    .recipe-meta { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+    .meta-item { display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; color: var(--gray-600); background: white; padding: 0.25rem 0.5rem; border-radius: 9999px; }
+
+    /* Section headers */
+    .section-header { font-size: 0.875rem; font-weight: 600; color: var(--gray-700); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+
+    /* Ingredients list */
+    .ingredient-item { display: flex; align-items: flex-start; gap: 0.5rem; padding: 0.5rem 0; border-bottom: 1px solid var(--gray-100); cursor: pointer; transition: all 0.2s; }
+    .ingredient-item:last-child { border-bottom: none; }
+    .ingredient-item:hover { background: var(--gray-50); margin: 0 -0.5rem; padding-left: 0.5rem; padding-right: 0.5rem; border-radius: 0.25rem; }
+    .ingredient-item.checked .ingredient-text { text-decoration: line-through; color: var(--gray-400); }
+    .ingredient-checkbox { width: 1.25rem; height: 1.25rem; border: 2px solid var(--gray-300); border-radius: 0.25rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; margin-top: 0.125rem; }
+    .ingredient-item.checked .ingredient-checkbox { background: var(--green-500); border-color: var(--green-500); color: white; }
+    .ingredient-amount { font-weight: 500; color: var(--gray-700); min-width: 3.5rem; }
+    .ingredient-text { flex: 1; }
+    .optional-badge { font-size: 0.625rem; background: var(--gray-200); color: var(--gray-600); padding: 0.125rem 0.375rem; border-radius: 9999px; margin-left: 0.5rem; }
+
+    /* Steps list */
+    .step-item { display: flex; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid var(--gray-100); }
+    .step-item:last-child { border-bottom: none; }
+    .step-number { width: 1.5rem; height: 1.5rem; background: var(--orange-500); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; flex-shrink: 0; }
+    .step-content { flex: 1; }
+    .step-time { font-size: 0.75rem; color: var(--gray-500); margin-top: 0.25rem; }
+
+    /* Nutrition panel */
+    .nutrition-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+    .nutrition-item { background: var(--gray-50); padding: 0.5rem; border-radius: 0.5rem; text-align: center; }
+    .nutrition-value { font-size: 1.125rem; font-weight: 600; color: var(--gray-800); }
+    .nutrition-label { font-size: 0.625rem; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* Serving adjuster */
+    .serving-adjuster { display: flex; align-items: center; gap: 0.5rem; background: var(--blue-50); padding: 0.5rem 0.75rem; border-radius: 0.5rem; }
+    .serving-count { font-size: 1.125rem; font-weight: 600; min-width: 2rem; text-align: center; }
+
+    /* Tags */
+    .tag { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.625rem; padding: 0.125rem 0.5rem; border-radius: 9999px; background: var(--orange-100); color: var(--orange-700); }
+
+    /* Difficulty badge */
+    .difficulty-easy { background: var(--green-100); color: var(--green-600); }
+    .difficulty-medium { background: var(--orange-100); color: var(--orange-600); }
+    .difficulty-hard { background: var(--red-50); color: var(--red-500); }
+
+    /* Card sections */
+    .card { background: white; border-radius: 0.75rem; padding: 1rem; border: 1px solid var(--gray-200); margin-bottom: 0.75rem; }
+
+    /* Focus states for accessibility */
+    button:focus-visible { outline: 2px solid var(--orange-500); outline-offset: 2px; }
+    .btn:focus-visible { box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2); }
+    .btn:active:not(:disabled) { transform: scale(0.98); }
+  </style>
+  <script type="module" crossorigin>(function(){const t=document.createElement("link").relList;if(t&&t.supports&&t.supports("modulepreload"))return;for(const n of document.querySelectorAll('link[rel="modulepreload"]'))r(n);new MutationObserver(n=>{for(const o of n)if(o.type==="childList")for(const l of o.addedNodes)l.tagName==="LINK"&&l.rel==="modulepreload"&&r(l)}).observe(document,{childList:!0,subtree:!0});function s(n){const o={};return n.integrity&&(o.integrity=n.integrity),n.referrerPolicy&&(o.referrerPolicy=n.referrerPolicy),n.crossOrigin==="use-credentials"?o.credentials="include":n.crossOrigin==="anonymous"?o.credentials="omit":o.credentials="same-origin",o}function r(n){if(n.ep)return;n.ep=!0;const o=s(n);fetch(n.href,o)}})();const u=(()=>{let e=1;const t=new Map;function s(d,c){const m=e++;return new Promise((f,I)=>{t.set(m,{resolve:f,reject:I}),window.parent.postMessage({jsonrpc:"2.0",id:m,method:d,params:c},"*")})}function r(d,c){window.parent.postMessage({jsonrpc:"2.0",method:d,params:c},"*")}window.addEventListener("message",d=>{const c=d.data;if(!(!c||typeof c!="object")){if(c.id&&t.has(c.id)){const{resolve:m,reject:f}=t.get(c.id);t.delete(c.id),c.error?f(c.error):m(c.result);return}if(c.method){const m=n[c.method];m&&m(c.params)}}});const n={};function o(d,c){n[d]=c}function l(){const d=document.getElementById("app");r("ui/notifications/size-change",{width:Math.ceil(d.scrollWidth),height:Math.ceil(d.scrollHeight)})}return{sendRequest:s,sendNotification:r,onNotification:o,reportSize:l}})();let a=null,p=4,v=4,g=new Set;const i={loading:document.getElementById("loading"),content:document.getElementById("content"),recipeIcon:document.getElementById("recipe-icon"),recipeName:document.getElementById("recipe-name"),recipeDescription:document.getElementById("recipe-description"),prepTime:document.getElementById("prep-time"),cookTime:document.getElementById("cook-time"),difficultyBadge:document.getElementById("difficulty-badge"),tagsContainer:document.getElementById("tags-container"),servingCount:document.getElementById("serving-count"),decreaseServings:document.getElementById("decrease-servings"),increaseServings:document.getElementById("increase-servings"),ingredientsList:document.getElementById("ingredients-list"),ingredientsProgress:document.getElementById("ingredients-progress"),stepsList:document.getElementById("steps-list"),calories:document.getElementById("calories"),protein:document.getElementById("protein"),carbs:document.getElementById("carbs"),fat:document.getElementById("fat"),fiber:document.getElementById("fiber"),saveRecipeBtn:document.getElementById("save-recipe-btn")};async function E(){try{await u.sendRequest("ui/initialize",{protocolVersion:"2025-06-18",appInfo:{name:"Recipe Chef",version:"1.0.0"},appCapabilities:{}}),u.sendNotification("ui/notifications/initialized",{}),new ResizeObserver(()=>u.reportSize()).observe(document.getElementById("app"))}catch(e){console.error("Failed to initialize:",e)}}u.onNotification("ui/notifications/tool-result",e=>{const t=e?.structuredContent;t?.recipe&&(a=t.recipe,p=a.servings,v=a.servings,g.clear(),h())});u.onNotification("ui/notifications/tool-input",e=>{console.log("Tool input:",e)});function h(){if(!a)return;i.loading.classList.add("hidden"),i.content.classList.remove("hidden"),i.recipeIcon.textContent=a.icon,i.recipeName.textContent=a.name,i.recipeDescription.textContent=a.description,i.prepTime.textContent=`${a.prepTime} min prep`,i.cookTime.textContent=`${a.cookTime} min cook`;const e={easy:{label:"Easy",class:"difficulty-easy"},medium:{label:"Medium",class:"difficulty-medium"},hard:{label:"Hard",class:"difficulty-hard"}},t=e[a.difficulty]||e.easy;i.difficultyBadge.textContent=t.label,i.difficultyBadge.className=`meta-item ${t.class}`,i.tagsContainer.innerHTML=a.tags.map(s=>`<span class="tag">${s}</span>`).join(""),i.servingCount.textContent=p,y(),x(),C(),u.reportSize()}function L(e,t){if(e==null||e==="")return"";let s;if(typeof e=="number")s=e;else if(typeof e=="string"&&e.includes("/")){const n=e.split("/");s=parseFloat(n[0])/parseFloat(n[1])}else s=parseFloat(e);if(isNaN(s))return e;const r=s*p/v;if(r===Math.floor(r))return r.toString();if(r<1){const n=[[.25,"¼"],[.33,"⅓"],[.5,"½"],[.67,"⅔"],[.75,"¾"]];for(const[o,l]of n)if(Math.abs(r-o)<.1)return l}return r.toFixed(1).replace(/\.0$/,"")}function y(){const e=a.ingredients||[];i.ingredientsList.innerHTML=e.map((r,n)=>{const o=g.has(n),l=L(r.amount,r.unit);return`
+          <div class="ingredient-item ${o?"checked":""}" data-index="${n}">
+            <div class="ingredient-checkbox">
+              ${o?'<span class="check-animate">✓</span>':""}
+            </div>
+            <span class="ingredient-amount">${l} ${r.unit}</span>
+            <span class="ingredient-text">
+              ${r.name}
+              ${r.optional?'<span class="optional-badge">optional</span>':""}
+            </span>
+          </div>
+        `}).join("");const t=g.size,s=e.length;i.ingredientsProgress.textContent=`${t}/${s}`,document.querySelectorAll(".ingredient-item").forEach(r=>{r.addEventListener("click",B)})}function B(e){const t=parseInt(e.currentTarget.dataset.index,10);g.has(t)?g.delete(t):g.add(t),y()}function x(){const e=a.steps||[];i.stepsList.innerHTML=e.map(t=>`
+        <div class="step-item">
+          <div class="step-number">${t.number}</div>
+          <div class="step-content">
+            <p class="text-sm text-gray-700">${t.instruction}</p>
+            ${t.time?`<p class="step-time">⏱️ ${t.time} min</p>`:""}
+          </div>
+        </div>
+      `).join("")}function C(){const e=a.nutrition||{};i.calories.textContent=e.calories||0,i.protein.textContent=`${e.protein||0}g`,i.carbs.textContent=`${e.carbs||0}g`,i.fat.textContent=`${e.fat||0}g`,i.fiber.textContent=`${e.fiber||0}g`}async function b(e){const t=Math.max(1,Math.min(12,p+e));if(t!==p){p=t,i.servingCount.textContent=p,y(),u.reportSize();try{const s=await u.sendRequest("tools/call",{name:"adjust-servings",arguments:{recipeId:a.id,newServings:p}});s?.structuredContent?.recipe&&(a=s.structuredContent.recipe,h())}catch(s){console.error("Failed to adjust servings:",s)}}}i.decreaseServings.addEventListener("click",()=>b(-1));i.increaseServings.addEventListener("click",()=>b(1));i.saveRecipeBtn.addEventListener("click",async()=>{const e=i.saveRecipeBtn,t=e.innerHTML;e.disabled=!0,e.innerHTML='<span class="mr-1">⏳</span> Saving...';try{await u.sendRequest("ui/message",{role:"user",content:[{type:"text",text:`Please save this recipe: ${a.name} 📖`}]}),e.innerHTML='<span class="mr-1">✅</span> Saved!',e.classList.remove("btn-primary"),e.classList.add("bg-green-500"),setTimeout(()=>{e.innerHTML=t,e.classList.remove("bg-green-500"),e.classList.add("btn-primary"),e.disabled=!1},2e3)}catch(s){console.error("Failed to send message:",s),e.innerHTML='<span class="mr-1">❌</span> Failed',setTimeout(()=>{e.innerHTML=t,e.disabled=!1},2e3)}});window.addEventListener("load",E);</script>
+</head>
+<body>
+  <div id="app" style="padding: 0.75rem; width: 100%;">
+    <!-- Loading State -->
+    <div id="loading" class="text-center py-8">
+      <div class="text-4xl mb-4">👨‍🍳</div>
+      <div class="animate-spin mx-auto mb-4" style="width: 2rem; height: 2rem; border: 3px solid var(--gray-200); border-top-color: var(--orange-600); border-radius: 50%;"></div>
+      <p class="text-gray-600 font-medium">Finding the perfect recipe...</p>
+      <p class="text-gray-400 text-xs mt-1">Preparing something delicious 🍽️</p>
+    </div>
+
+    <!-- Main Content (hidden until recipe loaded) -->
+    <div id="content" class="hidden">
+      <!-- Recipe Header -->
+      <div class="recipe-header">
+        <div class="flex items-start gap-3 mb-3">
+          <span id="recipe-icon" class="recipe-icon">🍝</span>
+          <div class="flex-1 min-w-0">
+            <h1 id="recipe-name" class="text-lg font-bold text-gray-800 mb-1">Recipe Name</h1>
+            <p id="recipe-description" class="text-sm text-gray-600 mb-2">Recipe description</p>
+            <div class="recipe-meta">
+              <span class="meta-item"><span>⏱️</span><span id="prep-time">0 min prep</span></span>
+              <span class="meta-item"><span>🍳</span><span id="cook-time">0 min cook</span></span>
+              <span id="difficulty-badge" class="meta-item difficulty-easy">Easy</span>
+            </div>
+          </div>
+        </div>
+        <div id="tags-container" class="flex flex-wrap gap-1"></div>
+      </div>
+
+      <!-- Serving Adjuster -->
+      <div class="card">
+        <div class="flex items-center justify-between">
+          <span class="text-sm font-medium text-gray-700">Servings</span>
+          <div class="serving-adjuster">
+            <button id="decrease-servings" class="btn-icon btn-outline">−</button>
+            <span id="serving-count" class="serving-count">4</span>
+            <button id="increase-servings" class="btn-icon btn-outline">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ingredients Section -->
+      <div class="card">
+        <div class="section-header">
+          <span>🥗</span>
+          <span>Ingredients</span>
+          <span id="ingredients-progress" class="text-xs text-gray-400 font-normal ml-auto">0/0</span>
+        </div>
+        <div id="ingredients-list">
+          <!-- Ingredients will be inserted here -->
+        </div>
+      </div>
+
+      <!-- Steps Section -->
+      <div class="card">
+        <div class="section-header">
+          <span>📝</span>
+          <span>Instructions</span>
+        </div>
+        <div id="steps-list">
+          <!-- Steps will be inserted here -->
+        </div>
+      </div>
+
+      <!-- Nutrition Section -->
+      <div class="card">
+        <div class="section-header">
+          <span>📊</span>
+          <span>Nutrition (per serving)</span>
+        </div>
+        <div class="nutrition-grid">
+          <div class="nutrition-item">
+            <div id="calories" class="nutrition-value">0</div>
+            <div class="nutrition-label">Calories</div>
+          </div>
+          <div class="nutrition-item">
+            <div id="protein" class="nutrition-value">0g</div>
+            <div class="nutrition-label">Protein</div>
+          </div>
+          <div class="nutrition-item">
+            <div id="carbs" class="nutrition-value">0g</div>
+            <div class="nutrition-label">Carbs</div>
+          </div>
+          <div class="nutrition-item">
+            <div id="fat" class="nutrition-value">0g</div>
+            <div class="nutrition-label">Fat</div>
+          </div>
+          <div class="nutrition-item">
+            <div id="fiber" class="nutrition-value">0g</div>
+            <div class="nutrition-label">Fiber</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Save Recipe Button -->
+      <button id="save-recipe-btn" class="btn btn-primary w-full mt-3">
+        <span class="mr-1">💾</span> Save Recipe
+      </button>
+    </div>
+  </div>
+
+</body>
+</html>

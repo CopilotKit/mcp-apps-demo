@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Fitness Coach</title>
+  <style>
+    /* Base reset */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* Colors */
+    :root {
+      --blue-50: #eff6ff; --blue-100: #dbeafe; --blue-500: #3b82f6; --blue-600: #2563eb; --blue-700: #1d4ed8;
+      --green-50: #f0fdf4; --green-100: #dcfce7; --green-500: #22c55e; --green-600: #16a34a;
+      --gray-50: #f9fafb; --gray-100: #f3f4f6; --gray-200: #e5e7eb; --gray-300: #d1d5db;
+      --gray-400: #9ca3af; --gray-500: #6b7280; --gray-600: #4b5563; --gray-700: #374151; --gray-800: #1f2937;
+      --yellow-50: #fefce8; --yellow-100: #fef9c3; --yellow-500: #eab308;
+      --red-50: #fef2f2; --red-500: #ef4444;
+    }
+
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--gray-50); color: var(--gray-800); line-height: 1.5; }
+
+    /* Layout utilities */
+    .hidden { display: none !important; }
+    .flex { display: flex; }
+    .flex-1 { flex: 1 1 0%; }
+    .items-start { align-items: flex-start; }
+    .items-center { align-items: center; }
+    .justify-between { justify-content: space-between; }
+    .justify-center { justify-content: center; }
+    .gap-2 { gap: 0.5rem; }
+    .gap-3 { gap: 0.75rem; }
+    .gap-4 { gap: 1rem; }
+    .space-y-3 > * + * { margin-top: 0.75rem; }
+    .space-y-4 > * + * { margin-top: 1rem; }
+    .space-y-6 > * + * { margin-top: 1.5rem; }
+
+    /* Spacing */
+    .p-3 { padding: 0.75rem; } .p-4 { padding: 1rem; } .p-6 { padding: 1.5rem; }
+    .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+    .px-4 { padding-left: 1rem; padding-right: 1rem; }
+    .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+    .py-8 { padding-top: 2rem; padding-bottom: 2rem; }
+    .mb-1 { margin-bottom: 0.25rem; } .mb-2 { margin-bottom: 0.5rem; } .mb-3 { margin-bottom: 0.75rem; } .mb-4 { margin-bottom: 1rem; } .mb-6 { margin-bottom: 1.5rem; }
+    .mr-1 { margin-right: 0.25rem; } .mr-2 { margin-right: 0.5rem; }
+    .mt-1 { margin-top: 0.25rem; } .mt-2 { margin-top: 0.5rem; } .mt-4 { margin-top: 1rem; } .mt-6 { margin-top: 1.5rem; }
+    .mx-auto { margin-left: auto; margin-right: auto; }
+
+    /* Sizing */
+    .w-full { width: 100%; }
+    .h-2 { height: 0.5rem; } .h-3 { height: 0.75rem; } .h-8 { height: 2rem; } .w-8 { width: 2rem; }
+    .min-w-0 { min-width: 0; }
+
+    /* Positioning */
+    .relative { position: relative; }
+    .absolute { position: absolute; }
+    .inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+    .pointer-events-none { pointer-events: none; }
+
+    /* Typography */
+    .text-xs { font-size: 0.75rem; } .text-sm { font-size: 0.875rem; } .text-lg { font-size: 1.125rem; }
+    .text-xl { font-size: 1.25rem; } .text-2xl { font-size: 1.5rem; } .text-4xl { font-size: 2.25rem; }
+    .font-medium { font-weight: 500; } .font-semibold { font-weight: 600; } .font-bold { font-weight: 700; }
+    .text-center { text-align: center; }
+    .text-gray-400 { color: var(--gray-400); } .text-gray-500 { color: var(--gray-500); }
+    .text-gray-600 { color: var(--gray-600); } .text-gray-700 { color: var(--gray-700); } .text-gray-800 { color: var(--gray-800); }
+    .text-blue-600 { color: var(--blue-600); } .text-blue-700 { color: var(--blue-700); }
+    .text-green-600 { color: var(--green-600); }
+
+    /* Backgrounds */
+    .bg-white { background: white; }
+    .bg-gray-50 { background: var(--gray-50); } .bg-gray-100 { background: var(--gray-100); } .bg-gray-200 { background: var(--gray-200); }
+    .bg-blue-50 { background: var(--blue-50); } .bg-blue-100 { background: var(--blue-100); } .bg-blue-500 { background: var(--blue-500); } .bg-blue-600 { background: var(--blue-600); }
+    .bg-green-50 { background: var(--green-50); } .bg-green-100 { background: var(--green-100); } .bg-green-500 { background: var(--green-500); }
+    .bg-yellow-50 { background: var(--yellow-50); }
+
+    /* Borders & Radius */
+    .border { border: 1px solid var(--gray-200); }
+    .border-l-4 { border-left: 4px solid; }
+    .border-blue-500 { border-color: var(--blue-500); }
+    .border-green-500 { border-color: var(--green-500); }
+    .border-yellow-500 { border-color: var(--yellow-500); }
+    .rounded { border-radius: 0.25rem; } .rounded-lg { border-radius: 0.5rem; } .rounded-xl { border-radius: 0.75rem; }
+    .rounded-full { border-radius: 9999px; }
+    .overflow-hidden { overflow: hidden; }
+
+    /* Shadows */
+    .shadow-sm { box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+
+    /* Buttons */
+    button { cursor: pointer; border: none; font: inherit; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn { padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 500; transition: all 0.2s; }
+    .btn-primary { background: var(--blue-600); color: white; }
+    .btn-primary:hover:not(:disabled) { background: var(--blue-700); }
+    .btn-outline { background: white; border: 1px solid var(--gray-300); color: var(--gray-700); }
+    .btn-outline:hover:not(:disabled) { background: var(--gray-50); }
+    .btn-success { background: var(--green-500); color: white; }
+    .btn-success:hover:not(:disabled) { background: var(--green-600); }
+    .btn-primary:hover:not(:disabled) { transform: scale(1.02); }
+    .btn-primary:active:not(:disabled) { transform: scale(0.98); }
+    .btn-outline:active:not(:disabled) { background: var(--gray-100); transform: scale(0.98); }
+    .exercise-card:active { transform: scale(0.99); }
+
+    /* Progress bar */
+    .progress-bar { height: 0.5rem; background: var(--gray-200); border-radius: 9999px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--blue-600); transition: width 0.3s; }
+    .progress-milestone { color: var(--gray-300); font-size: 0.5rem; line-height: 0.5rem; }
+
+    /* Timer ring */
+    .timer-ring { transform: rotate(-90deg); }
+    .timer-ring circle { transition: stroke-dashoffset 1s linear; }
+
+    /* Animations */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes celebrate { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+    @keyframes pulse-border { 0%, 100% { border-left-color: var(--blue-500); } 50% { border-left-color: var(--blue-300); } }
+    @keyframes confetti-fall { 0% { transform: translateY(-10px) rotate(0deg); opacity: 1; } 100% { transform: translateY(100px) rotate(360deg); opacity: 0; } }
+    @keyframes timer-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+    @keyframes milestone-pop { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
+    .timer-ending { animation: timer-pulse 0.5s ease infinite; }
+    .milestone-celebrate { animation: milestone-pop 0.5s ease; }
+
+    /* Header styling */
+    .workout-header { margin-bottom: 1rem; }
+    .animate-spin { animation: spin 1s linear infinite; }
+    .celebrate { animation: celebrate 0.5s ease-in-out; }
+
+    /* Focus states for accessibility */
+    button:focus-visible { outline: 2px solid var(--blue-500); outline-offset: 2px; }
+    .btn:focus-visible { outline: 2px solid var(--blue-500); outline-offset: 2px; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2); }
+
+    /* Exercise card */
+    .exercise-card { transition: all 0.3s ease; background: white; border-radius: 0.75rem; padding: 1rem; border: 1px solid var(--gray-200); margin-bottom: 0.75rem; }
+    .exercise-card:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .exercise-card.completed { background: var(--gray-50); border-color: var(--gray-100); }
+    .exercise-card.completed .exercise-name { text-decoration: line-through; color: var(--gray-400); }
+    .exercise-card.completed .exercise-icon { opacity: 0.5; filter: grayscale(0.5); }
+    .exercise-card.current { border-left: 4px solid var(--blue-500); background: var(--blue-50); animation: pulse-border 2s ease-in-out infinite; }
+
+    /* Exercise icon */
+    .exercise-icon { font-size: 2.5rem; line-height: 1; transition: all 0.3s ease; }
+
+    /* Checkmark for completed */
+    .completed-check { display: flex; align-items: center; justify-content: center; width: 1.75rem; height: 1.75rem; background: var(--green-500); border-radius: 50%; color: white; font-size: 1rem; animation: pop-in 0.3s ease; }
+
+    /* Skip button styling */
+    .skip-btn { transition: color 0.2s; color: var(--gray-500); }
+    .skip-btn:hover { color: var(--red-500); }
+    .exercise-desc { color: var(--gray-500); }
+
+    /* Line clamp for descriptions */
+    .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+    /* Pop-in animation for checkmark */
+    @keyframes pop-in { 0% { transform: scale(0); opacity: 0; } 50% { transform: scale(1.2); } 100% { transform: scale(1); opacity: 1; } }
+
+    /* Success flash for completed card */
+    @keyframes success-flash { 0% { background: var(--green-100); } 100% { background: var(--gray-50); } }
+    .exercise-card.just-completed { animation: success-flash 0.5s ease; }
+  </style>
+  <script type="module" crossorigin>(function(){const e=document.createElement("link").relList;if(e&&e.supports&&e.supports("modulepreload"))return;for(const t of document.querySelectorAll('link[rel="modulepreload"]'))i(t);new MutationObserver(t=>{for(const c of t)if(c.type==="childList")for(const u of c.addedNodes)u.tagName==="LINK"&&u.rel==="modulepreload"&&i(u)}).observe(document,{childList:!0,subtree:!0});function n(t){const c={};return t.integrity&&(c.integrity=t.integrity),t.referrerPolicy&&(c.referrerPolicy=t.referrerPolicy),t.crossOrigin==="use-credentials"?c.credentials="include":t.crossOrigin==="anonymous"?c.credentials="omit":c.credentials="same-origin",c}function i(t){if(t.ep)return;t.ep=!0;const c=n(t);fetch(t.href,c)}})();const l=(()=>{let o=1;const e=new Map;function n(d,a){const m=o++;return new Promise((x,I)=>{e.set(m,{resolve:x,reject:I}),window.parent.postMessage({jsonrpc:"2.0",id:m,method:d,params:a},"*")})}function i(d,a){window.parent.postMessage({jsonrpc:"2.0",method:d,params:a},"*")}window.addEventListener("message",d=>{const a=d.data;if(!(!a||typeof a!="object")){if(a.id&&e.has(a.id)){const{resolve:m,reject:x}=e.get(a.id);e.delete(a.id),a.error?x(a.error):m(a.result);return}if(a.method){const m=t[a.method];m&&m(a.params)}}});const t={};function c(d,a){t[d]=a}function u(){const d=document.getElementById("app");i("ui/notifications/size-change",{width:Math.ceil(d.scrollWidth),height:Math.ceil(d.scrollHeight)})}return{sendRequest:n,sendNotification:i,onNotification:c,reportSize:u}})();let r=null,p=null;const s={loading:document.getElementById("loading"),content:document.getElementById("content"),workoutTitle:document.getElementById("workout-title"),progressText:document.getElementById("progress-text"),progressBar:document.getElementById("progress-bar"),durationText:document.getElementById("duration-text"),caloriesText:document.getElementById("calories-text"),exerciseCount:document.getElementById("exercise-count"),timerSection:document.getElementById("timer-section"),timerProgress:document.getElementById("timer-progress"),timerText:document.getElementById("timer-text"),timerTitle:document.getElementById("timer-title"),timerSubtitle:document.getElementById("timer-subtitle"),exercises:document.getElementById("exercises"),completion:document.getElementById("completion"),completionStats:document.getElementById("completion-stats"),makeEasierBtn:document.getElementById("make-easier-btn"),makeHarderBtn:document.getElementById("make-harder-btn"),skipRestBtn:document.getElementById("skip-rest-btn")};async function E(){try{await l.sendRequest("ui/initialize",{protocolVersion:"2025-06-18",appInfo:{name:"AI Fitness Coach",version:"1.0.0"},appCapabilities:{}}),l.sendNotification("ui/notifications/initialized",{}),new ResizeObserver(()=>l.reportSize()).observe(document.getElementById("app"))}catch(o){console.error("Failed to initialize:",o)}}l.onNotification("ui/notifications/tool-result",o=>{const e=o?.structuredContent;e?.workout&&(r=e.workout,C())});l.onNotification("ui/notifications/tool-input",o=>{console.log("Tool input:",o)});function C(){if(!r)return;s.loading.classList.add("hidden"),s.content.classList.remove("hidden");const e={full_body:{label:"Full Body",icon:"🏋️"},upper_body:{label:"Upper Body",icon:"💪"},lower_body:{label:"Lower Body",icon:"🦵"},cardio:{label:"Cardio",icon:"🏃"},core:{label:"Core",icon:"🎯"}}[r.focusArea]||{label:r.focusArea,icon:"💪"};s.workoutTitle.innerHTML=`<span class="mr-1">${e.icon}</span>${e.label} Workout`,s.durationText.textContent=`${r.actualDurationMinutes} min`,s.caloriesText.textContent=`${r.totalCalories} cal`,f(),g(),l.reportSize()}function f(){const o=r.exercises.findIndex(e=>!e.completed);s.exercises.innerHTML=r.exercises.map((e,n)=>{const i=n===o,t=["exercise-card"];return e.completed&&t.push("completed"),i&&t.push("current"),`
+        <div class="${t.join(" ")}" data-exercise-id="${e.exercise.id}" data-index="${n}">
+          <div class="flex items-start justify-between">
+            <div class="flex items-center gap-3">
+              <span class="exercise-icon">${e.exercise.icon}</span>
+              <div class="min-w-0">
+                <h3 class="exercise-name font-semibold">${e.exercise.name}</h3>
+                <p class="text-sm text-gray-500">${e.sets} sets × ${e.reps} ${e.exercise.category==="cardio"||e.exercise.category==="flexibility"?"sec":"reps"}</p>
+              </div>
+            </div>
+            ${e.completed?'<span class="completed-check">✓</span>':'<button class="complete-btn btn btn-primary text-sm">Complete</button>'}
+          </div>
+          <p class="text-xs exercise-desc mt-2 line-clamp-2">${e.exercise.description}</p>
+          ${e.completed?"":`
+            <button class="skip-btn mt-2 text-xs">Skip this exercise</button>
+          `}
+        </div>
+      `}).join(""),document.querySelectorAll(".complete-btn").forEach(e=>{e.addEventListener("click",v)}),document.querySelectorAll(".skip-btn").forEach(e=>{e.addEventListener("click",B)})}let h=0;function g(){const o=r.exercises.filter(t=>t.completed).length,e=r.exercises.length,n=e>0?Math.round(o/e*100):0;s.progressText.textContent=`${n}%`,s.progressBar.style.width=`${n}%`,s.exerciseCount.textContent=`${o} of ${e}`;const i=[25,50,75];for(const t of i)n>=t&&h<t&&(k(t),h=t);n===100&&w()}function k(o){const e=o===25?"🌟":o===50?"⭐":"🔥";s.progressText.classList.add("milestone-celebrate"),s.progressText.textContent=`${e} ${o}%`,setTimeout(()=>{s.progressText.classList.remove("milestone-celebrate"),s.progressText.textContent=`${o}%`},1e3)}async function v(o){const e=o.target.closest(".exercise-card"),n=e.dataset.exerciseId,i=parseInt(e.dataset.index,10),t=r.exercises[i];r.exercises[i].completed=!0,f(),g(),l.reportSize();const c=document.querySelector(`[data-exercise-id="${n}"]`);c&&(c.classList.add("just-completed"),setTimeout(()=>c.classList.remove("just-completed"),500)),t.restSeconds>0&&r.exercises.some(u=>!u.completed)&&L(t.restSeconds);try{await l.sendRequest("tools/call",{name:"log-exercise-complete",arguments:{workoutId:r.id,exerciseId:n,setsCompleted:t.sets}})}catch(u){console.error("Failed to log exercise:",u)}}async function B(o){const n=o.target.closest(".exercise-card").dataset.exerciseId;try{const i=await l.sendRequest("tools/call",{name:"adjust-workout",arguments:{workoutId:r.id,modification:"skip",exerciseId:n}});i?.structuredContent?.updatedWorkout?r=i.structuredContent.updatedWorkout:r.exercises=r.exercises.filter(t=>t.exercise.id!==n),f(),g(),l.reportSize()}catch(i){console.error("Failed to skip exercise:",i)}}function T(o,e){const n=o/e;return n>.7?{title:"Rest Time",subtitle:"Catch your breath 😮‍💨"}:n>.4?{title:"Recharging",subtitle:"You're doing great! 💫"}:n>.15?{title:"Almost Ready",subtitle:"Get ready for the next one! 🔥"}:{title:"Let's Go!",subtitle:"Next exercise incoming! 💪"}}function L(o){p&&(clearInterval(p),p=null),s.timerSection.classList.remove("hidden");let e=o;const n=175.93;function i(){s.timerText.textContent=e;const t=(o-e)/o*n;s.timerProgress.style.strokeDashoffset=t;const c=T(e,o);s.timerTitle.textContent=c.title,s.timerSubtitle.textContent=c.subtitle,e<=3&&e>0?s.timerText.classList.add("timer-ending"):s.timerText.classList.remove("timer-ending"),e<=0?y():e--}i(),p=setInterval(i,1e3),l.reportSize()}function y(){p&&(clearInterval(p),p=null),s.timerSection.classList.add("hidden"),s.timerProgress.style.strokeDashoffset=0,l.reportSize()}s.skipRestBtn.addEventListener("click",y);async function b(o){try{const e=await l.sendRequest("tools/call",{name:"adjust-workout",arguments:{workoutId:r.id,modification:o}});e?.structuredContent?.updatedWorkout&&(r=e.structuredContent.updatedWorkout,f(),s.durationText.textContent=`${r.actualDurationMinutes} min`,s.caloriesText.textContent=`${r.totalCalories} cal`,l.reportSize())}catch(e){console.error("Failed to adjust workout:",e)}}s.makeEasierBtn.addEventListener("click",()=>b("easier"));s.makeHarderBtn.addEventListener("click",()=>b("harder"));function $(){const o=document.getElementById("confetti"),e=["🎊","✨","🌟","💫","⭐"];for(let n=0;n<20;n++){const i=document.createElement("div");i.textContent=e[Math.floor(Math.random()*e.length)],i.style.cssText=`
+          position: absolute;
+          left: ${Math.random()*100}%;
+          top: -20px;
+          font-size: ${12+Math.random()*12}px;
+          animation: confetti-fall ${1.5+Math.random()*1}s ease-out forwards;
+          animation-delay: ${Math.random()*.5}s;
+        `,o.appendChild(i)}setTimeout(()=>{o.innerHTML=""},3e3)}function w(){y(),s.exercises.classList.add("hidden"),s.makeEasierBtn.parentElement.classList.add("hidden"),s.completion.classList.remove("hidden"),s.completion.classList.add("celebrate"),s.completionStats.textContent=`You completed ${r.exercises.length} exercises in ~${r.actualDurationMinutes} minutes!`,$(),l.reportSize(),l.sendRequest("ui/message",{role:"user",content:[{type:"text",text:"I completed my workout! 💪"}]}).catch(()=>{})}window.addEventListener("load",E);</script>
+</head>
+<body>
+  <div id="app" style="padding: 0.75rem; width: 100%;">
+    <!-- Loading State -->
+    <div id="loading" class="text-center py-8">
+      <div class="text-4xl mb-4">🏋️</div>
+      <div class="animate-spin mx-auto mb-4" style="width: 2rem; height: 2rem; border: 3px solid var(--gray-200); border-top-color: var(--blue-600); border-radius: 50%;"></div>
+      <p class="text-gray-600 font-medium">Preparing your workout...</p>
+      <p class="text-gray-400 text-xs mt-1">Getting you ready to crush it 💪</p>
+    </div>
+
+    <!-- Main Content (hidden until workout loaded) -->
+    <div id="content" class="hidden">
+      <!-- Header with Progress -->
+      <div class="workout-header">
+        <div class="flex justify-between items-center mb-1">
+          <h1 id="workout-title" class="text-lg font-bold text-gray-800">Your Workout</h1>
+          <span id="progress-text" class="text-sm font-semibold text-blue-600">0%</span>
+        </div>
+        <div class="progress-bar relative">
+          <div id="progress-bar" class="progress-fill" style="width: 0%"></div>
+          <div class="absolute inset-0 flex justify-between pointer-events-none" style="padding: 0 25%;">
+            <span class="progress-milestone">|</span>
+            <span class="progress-milestone">|</span>
+            <span class="progress-milestone">|</span>
+          </div>
+        </div>
+        <div class="flex justify-between text-xs text-gray-500 mt-1">
+          <span class="flex items-center gap-1"><span>⏱️</span><span id="duration-text">0 min</span></span>
+          <span id="exercise-count" class="font-medium text-gray-600">0 of 0</span>
+          <span class="flex items-center gap-1"><span>🔥</span><span id="calories-text">0 cal</span></span>
+        </div>
+      </div>
+
+      <!-- Timer Section (shown during rest) -->
+      <div id="timer-section" class="hidden mb-4 bg-blue-50 rounded-xl p-4">
+        <div class="flex items-center gap-4">
+          <div class="relative" style="width: 64px; height: 64px;">
+            <svg class="timer-ring" width="64" height="64" viewBox="0 0 64 64">
+              <circle cx="32" cy="32" r="28" stroke="#dbeafe" stroke-width="6" fill="none"/>
+              <circle id="timer-progress" cx="32" cy="32" r="28" stroke="#3b82f6" stroke-width="6" fill="none"
+                stroke-dasharray="175.93" stroke-dashoffset="0" stroke-linecap="round"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <span id="timer-text" class="text-xl font-bold text-blue-700">0</span>
+            </div>
+          </div>
+          <div class="flex-1">
+            <p id="timer-title" class="font-medium text-blue-800">Rest Time</p>
+            <p id="timer-subtitle" class="text-sm text-blue-600">Catch your breath</p>
+          </div>
+          <button id="skip-rest-btn" class="btn btn-outline text-sm">Skip</button>
+        </div>
+      </div>
+
+      <!-- Exercise List -->
+      <div id="exercises" class="space-y-3">
+        <!-- Exercise cards will be inserted here -->
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="mt-4 flex gap-2">
+        <button id="make-easier-btn" class="flex-1 btn btn-outline text-sm flex items-center justify-center gap-1">
+          <span>😌</span> Easier
+        </button>
+        <button id="make-harder-btn" class="flex-1 btn btn-outline text-sm flex items-center justify-center gap-1">
+          <span>💪</span> Harder
+        </button>
+      </div>
+
+      <!-- Completion Message -->
+      <div id="completion" class="hidden text-center py-8 bg-green-50 rounded-xl relative overflow-hidden">
+        <div id="confetti" class="absolute inset-0 pointer-events-none"></div>
+        <div class="text-6xl mb-2">🎉</div>
+        <h2 class="text-2xl font-bold text-green-600 mb-1">Workout Complete!</h2>
+        <p id="completion-stats" class="text-sm text-gray-600 mb-3"></p>
+        <div class="flex justify-center gap-4 text-3xl mb-2">
+          <span>🏆</span><span>⭐</span><span>🥇</span>
+        </div>
+        <p class="text-xs text-gray-400">Great job! You crushed it! 💪</p>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
