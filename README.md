@@ -1,5 +1,11 @@
 # MCP Apps Demo
 
+
+https://github.com/user-attachments/assets/36fcfd09-d05b-485e-9f3a-d1a036b82204
+
+
+
+
 Interactive app demos built with [CopilotKit](https://copilotkit.ai) and [MCP Apps](https://github.com/modelcontextprotocol/ext-apps) — showcasing the MCP Apps Extension (SEP-1865) for rendering interactive UIs directly in the chat.
 
 ## Live Demo
