@@ -166,6 +166,25 @@ body {
   75% { transform: translate(-48%, -52%) scale(1.1); }
 }
 
+/* Mobile responsive blobs - reduce size and blur for performance */
+@media (max-width: 767px) {
+  .abstract-bg::before {
+    width: 300px;
+    height: 300px;
+    filter: blur(60px);
+  }
+  .abstract-bg::after {
+    width: 250px;
+    height: 250px;
+    filter: blur(50px);
+  }
+  .blob-3 {
+    width: 200px;
+    height: 200px;
+    filter: blur(40px);
+  }
+}
+
 /* =============================================================================
    GLASSMORPHISM COMPONENTS
 ============================================================================= */

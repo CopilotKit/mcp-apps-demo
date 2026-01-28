@@ -1,6 +1,7 @@
 "use client";
 
-import { CopilotKitProvider, CopilotSidebar, useAgent, useCopilotKit } from "@copilotkitnext/react";
+import { CopilotKitProvider, CopilotSidebar, CopilotPopup, useAgent, useCopilotKit } from "@copilotkitnext/react";
+import { useMediaQuery } from "@/hooks/use-media-query";
 import { randomUUID, DEFAULT_AGENT_ID } from "@copilotkitnext/shared";
 import { useCallback } from "react";
 
@@ -111,6 +112,7 @@ export default function MCPAppsDemo() {
 function AppLayout() {
   const { agent } = useAgent({ agentId: DEFAULT_AGENT_ID });
   const { copilotkit } = useCopilotKit();
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   // Send a message to the chat and run the agent
   const sendMessage = useCallback(async (message: string) => {
@@ -134,7 +136,7 @@ function AppLayout() {
       </div>
 
       {/* Main Content */}
-      <main className="relative z-10 mx-auto flex w-full max-w-5xl flex-col gap-8 px-6 py-12">
+      <main className="relative z-10 mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 py-6 md:px-6 md:py-12">
         {/* Hero Section */}
         <section className="text-center space-y-6">
           <div className="inline-flex items-center gap-2 glass-subtle px-4 py-2 rounded-full text-sm text-[var(--color-text-secondary)]">
@@ -148,6 +150,24 @@ function AppLayout() {
             Rich UI components that render directly in the chat sidebar. Powered by the
             MCP Apps Extension (SEP-1865) with bidirectional communication.
           </p>
+          <div className="flex justify-center gap-3">
+            <a
+              href="https://go.copilotkit.ai/mcp-apps"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 text-sm bg-gradient-to-r from-[var(--color-lilac)] to-[var(--color-mint)] text-white rounded-full hover:opacity-90 transition-opacity font-medium"
+            >
+              Read more ↗
+            </a>
+            <a
+              href="https://go.copilotkit.ai/mcp-apps-docs"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 text-sm bg-white/10 backdrop-blur border border-white/20 text-[var(--color-text-primary)] rounded-full hover:bg-white/20 transition-colors font-medium"
+            >
+              Docs (get started) ↗
+            </a>
+          </div>
         </section>
 
         {/* App Cards Grid */}
@@ -205,11 +225,20 @@ function AppLayout() {
         </section>
       </main>
 
-      {/* CopilotKit Sidebar */}
-      <CopilotSidebar
-        defaultOpen={true}
-        width="50%"
-      />
+      {/* CopilotKit Chat UI - Sidebar on desktop, Popup on mobile */}
+      {isDesktop ? (
+        <CopilotSidebar
+          defaultOpen={true}
+          width="50%"
+        />
+      ) : (
+        <CopilotPopup
+          labels={{
+            modalHeaderTitle: "MCP Apps Assistant",
+            chatInputPlaceholder: "What would you like to try today?",
+          }}
+        />
+      )}
     </div>
   );
 }
