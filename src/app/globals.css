@@ -293,6 +293,52 @@ body {
 }
 
 /* =============================================================================
+   DOCS BUTTONS
+============================================================================= */
+
+.docs-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-xl);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: 1px solid transparent;
+  font-family: var(--font-family);
+}
+
+.docs-btn-primary {
+  background: linear-gradient(135deg, var(--color-lilac-dark), var(--color-mint-dark));
+  color: white;
+  box-shadow: var(--shadow-md);
+}
+
+.docs-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(27, 147, 111, 0.35);
+  filter: brightness(1.05);
+}
+
+.docs-btn-secondary {
+  background: var(--color-glass);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--color-border-glass);
+  color: var(--color-text-primary);
+}
+
+.docs-btn-secondary:hover {
+  background: var(--color-glass-dark);
+  border-color: var(--color-lilac);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* =============================================================================
    COPILOTKIT SIDEBAR OVERRIDES
 ============================================================================= */
 

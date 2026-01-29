@@ -7,7 +7,7 @@
 
 import { CopilotRuntime, createCopilotEndpoint, InMemoryAgentRunner } from "@copilotkitnext/runtime";
 import { handle } from "hono/vercel";
-import { BasicAgent } from "@copilotkitnext/agent";
+import { BuiltInAgent } from "@copilotkitnext/agent";
 import { MCPAppsMiddleware } from "@ag-ui/mcp-apps-middleware";
 
 // Determine which LLM model to use based on available API keys
@@ -25,7 +25,7 @@ const determineModel = () => {
 };
 
 // Create the agent with multi-app assistant persona and MCP Apps middleware
-const agent = new BasicAgent({
+const agent = new BuiltInAgent({
   model: determineModel(),
   prompt: `You are an AI assistant with access to 4 interactive apps that render in the chat. Each app provides a rich UI for specific tasks.
 

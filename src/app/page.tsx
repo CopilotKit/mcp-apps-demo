@@ -148,6 +148,34 @@ function AppLayout() {
             Rich UI components that render directly in the chat sidebar. Powered by the
             MCP Apps Extension (SEP-1865) with bidirectional communication.
           </p>
+
+          {/* Docs buttons */}
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+            <a
+              href="https://go.copilotkit.ai/mcp-apps"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="docs-btn docs-btn-primary"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+              </svg>
+              Read more
+            </a>
+            <a
+              href="https://go.copilotkit.ai/mcp-apps-docs"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="docs-btn docs-btn-secondary"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                <path d="M2 17l10 5 10-5"/>
+              </svg>
+              Docs
+            </a>
+          </div>
         </section>
 
         {/* App Cards Grid */}
