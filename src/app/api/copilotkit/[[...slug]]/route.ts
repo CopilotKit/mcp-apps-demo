@@ -60,7 +60,6 @@ Create task boards with drag-drop cards and columns.
 - Ask clarifying questions if key parameters are missing
 - Each app has helper tools for additional interactions within the UI
 - Be helpful and guide users through the interactive features`,
-  temperature: 0.7,
 }).use(new MCPAppsMiddleware({
   mcpServers: [
     { type: "http", url: process.env.MCP_SERVER_URL || "http://localhost:3001/mcp" }
